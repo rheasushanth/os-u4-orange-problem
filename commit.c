@@ -199,5 +199,6 @@ int commit_create(const char *message, ObjectID *commit_id_out) {
 
     (void)message;
     (void)commit_id_out;
+    if (tree_from_index(&c.tree) != 0)
     return -1;
 }
