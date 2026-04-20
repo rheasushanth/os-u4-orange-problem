@@ -136,6 +136,14 @@ int tree_from_index(ObjectID *id_out) {
 
     Tree tree;
     tree.count = 0;
+    char line[1024];
+
+while (fgets(line, sizeof(line), fp)) {
+    if (tree.count >= MAX_TREE_ENTRIES)
+        break;
+
+    tree.count++;
+
 
     fclose(fp);
 
