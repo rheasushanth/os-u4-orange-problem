@@ -109,6 +109,22 @@ memcpy(buffer, header, header_len);
 memcpy(buffer + header_len, data, len);
 
 compute_hash(buffer, total_len, id_out);
+if (object_exists(id_out)) {
+    free(buffer);
+    return 0;
+}
+
+char path[512];
+object_path(id_out, path, sizeof(path));
+
+char hex[65];
+hash_to_hex(id_out, hex);
+
+char dir[512];
+snprintf(dir, sizeof(dir), "%s/%.2s", OBJECTS_DIR, hex);
+
+mkdir(OBJECTS_DIR, 0755);
+mkdir(dir, 0755);
 
 (void)header_len;
 return -1;
