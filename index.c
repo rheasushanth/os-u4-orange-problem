@@ -135,27 +135,27 @@ int index_status(const Index *index) {
 //
 // Returns 0 on success, -1 on error.
 
-    int index_load(Index *index) {
+ int index_load(Index *index) {
     index->count = 0;
 
     FILE *fp = fopen(".pes/index", "r");
     if (!fp) return 0;
     char hex[65];
 
-  while (1) {
-    IndexEntry *e = &index->entries[index->count];
+    while (1) {
+      IndexEntry *e = &index->entries[index->count];
 
-    int rc = fscanf(fp, "%o %64s %u %u %255s",
+      int rc = fscanf(fp, "%o %64s %u %u %255s",
                     &e->mode,
                     hex,
                     &e->mtime_sec,
                     &e->size,
                     e->path);
 
-    if (rc != 5) break;
+      if (rc != 5) break;
 
-    hex_to_hash(hex, &e->hash);
-    index->count++;
+      hex_to_hash(hex, &e->hash);
+      index->count++;
 }
 
     fclose(fp);
@@ -217,3 +217,20 @@ int index_add(Index *index, const char *path) {
     object_write(OBJ_BLOB, buffer, size, &oid);
 
     free(buffer);
+        struct stat st;
+    stat(path, &st);
+
+    IndexEntry *entry = index_find(index, path);
+
+    if (!entry)
+        entry = &index->entries[index->count++];
+
+    entry->mode = 100644;
+    entry->mtime_sec = st.st_mtime;
+    entry->size = st.st_size;
+    strcpy(entry->path, path);
+    entry->hash = oid;
+
+    return index_save(index);
+}
+    
