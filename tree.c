@@ -141,6 +141,21 @@ int tree_from_index(ObjectID *id_out) {
 while (fgets(line, sizeof(line), fp)) {
     if (tree.count >= MAX_TREE_ENTRIES)
         break;
+   TreeEntry *entry = &tree.entries[tree.count];
+
+  char hash_hex[HASH_HEX_SIZE + 1];
+  long mtime;
+  long size;
+
+  sscanf(line, "%o %64s %ld %ld %255[^\n]",
+       &entry->mode,
+       hash_hex,
+       &mtime,
+       &size,
+       entry->name);
+
+  hex_to_hash(hash_hex, &entry->hash);
+
 
     tree.count++;
 
