@@ -162,10 +162,9 @@ while (fgets(line, sizeof(line), fp)) {
 
     void *data;
     size_t len;
+    int rc = object_write(OBJ_TREE, data, len, id_out);
 
-    if (tree_serialize(&tree, &data, &len) != 0)
-    return -1;
+    free(data);
 
- 
-
+    return rc;
 }
