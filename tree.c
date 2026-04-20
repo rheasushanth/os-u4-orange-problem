@@ -158,11 +158,14 @@ while (fgets(line, sizeof(line), fp)) {
 
 
     tree.count++;
-
-
     fclose(fp);
 
-    (void)id_out;
+    void *data;
+    size_t len;
+
+    if (tree_serialize(&tree, &data, &len) != 0)
     return -1;
+
+ 
 
 }
