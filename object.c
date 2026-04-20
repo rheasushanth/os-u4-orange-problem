@@ -125,6 +125,38 @@ snprintf(dir, sizeof(dir), "%s/%.2s", OBJECTS_DIR, hex);
 
 mkdir(OBJECTS_DIR, 0755);
 mkdir(dir, 0755);
+char temp[512];
+    snprintf(temp, sizeof(temp), "%s.tmp", path);
+
+    int fd = open(temp, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if (fd < 0) {
+        free(buffer);
+        return -1;
+    }
+
+    if (write(fd, buffer, total_len) != (ssize_t)total_len) {
+        close(fd);
+        free(buffer);
+        return -1;
+    }
+
+    fsync(fd);
+    close(fd);
+
+    if (rename(temp, path) != 0) {
+        free(buffer);
+        return -1;
+    }
+
+    int dfd = open(dir, O_RDONLY);
+    if (dfd >= 0) {
+        fsync(dfd);
+        close(dfd);
+    }
+
+    free(buffer);
+    return 0;
+}
 
 (void)header_len;
 return -1;
