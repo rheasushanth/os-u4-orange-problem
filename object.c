@@ -102,6 +102,13 @@ else strcpy(type_str, "commit");
 
 char header[64];
 int header_len = sprintf(header, "%s %zu", type_str, len) + 1;
+size_t total_len = header_len + len;
+char *buffer = malloc(total_len);
+
+memcpy(buffer, header, header_len);
+memcpy(buffer + header_len, data, len);
+
+compute_hash(buffer, total_len, id_out);
 
 (void)header_len;
 return -1;
