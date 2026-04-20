@@ -196,11 +196,8 @@ int head_update(const ObjectID *new_commit) {
 int commit_create(const char *message, ObjectID *commit_id_out) {
     Commit c;
     memset(&c, 0, sizeof(c));
-
-    (void)message;
-    (void)commit_id_out;
     if (tree_from_index(&c.tree) != 0)
-    return -1;
+      return -1;
     if (head_read(&c.parent) == 0)
       c.has_parent = 1;
     else
@@ -220,5 +217,10 @@ int commit_create(const char *message, ObjectID *commit_id_out) {
       return -1;
 }
 
-free(data);
-}
+   free(data);
+   if (head_update(commit_id_out) != 0)
+    return -1;
+
+    return 0;
+ }
+
